@@ -1,29 +1,31 @@
 
 import React, { useState } from 'react';
-import { View, TextInput, Button } from 'react-native';
+import { View, TextInput, Button, Alert } from 'react-native';
+import updateUserProfile from '../apis/UserProfileUpdateApi';
 import { UserProfileUpdateRequest, UserProfileUpdateResponse } from '../types/Types';
-import { updateUserProfile } from '../apis/UserProfileUpdateApi';
 
 const EditProfileScreen: React.FC = () => {
   const [name, setName] = useState('');
   const [contactInfo, setContactInfo] = useState('');
   const [address, setAddress] = useState('');
-  const [profilePicture, setProfilePicture] = useState('');
 
-  const handleSaveChanges = async () => {
-    const request: UserProfileUpdateRequest = {
-      token: 'YOUR_JWT_TOKEN',
-      name,
-      contactInfo,
-      address,
-      profilePicture,
-    };
-
+  const handleProfileUpdate = async () => {
     try {
+      const request: UserProfileUpdateRequest = {
+        token: 'YOUR_JWT_TOKEN', // Replace with the actual JWT token
+        name,
+        contactInfo,
+        address,
+      };
       const response: UserProfileUpdateResponse = await updateUserProfile(request);
-      console.log(response.message);
+      if (response.success) {
+        Alert.alert('Success', response.message);
+        // Redirect to the profile screen or perform any other necessary actions
+      } else {
+        Alert.alert('Error', response.message);
+      }
     } catch (error) {
-      console.error(error);
+      Alert.alert('Error', 'Failed to update user profile');
     }
   };
 
@@ -44,12 +46,7 @@ const EditProfileScreen: React.FC = () => {
         value={address}
         onChangeText={setAddress}
       />
-      <TextInput
-        placeholder="Profile Picture"
-        value={profilePicture}
-        onChangeText={setProfilePicture}
-      />
-      <Button title="Save Changes" onPress={handleSaveChanges} />
+      <Button title="Save Changes" onPress={handleProfileUpdate} />
     </View>
   );
 };
