@@ -1,8 +1,7 @@
 
 import React, { useState } from 'react';
-import { View, TextInput, Button } from 'react-native';
-import { UserRegistrationRequest } from '../types/Types';
-import { registerUser } from '../apis/UserRegistrationApi';
+import { View, TextInput, Button, Alert } from 'react-native';
+import registerUser from '../apis/UserRegistrationApi';
 
 const RegistrationForm: React.FC = () => {
   const [name, setName] = useState('');
@@ -10,19 +9,16 @@ const RegistrationForm: React.FC = () => {
   const [password, setPassword] = useState('');
 
   const handleRegistration = async () => {
-    const request: UserRegistrationRequest = {
-      name,
-      email,
-      password,
-    };
-
     try {
-      const response = await registerUser(request);
-      console.log(response);
-      // Handle success response and navigate to the next screen
+      const response = await registerUser({ name, email, password });
+      if (response.success) {
+        Alert.alert('Success', response.message);
+        // Redirect to the login screen or perform any other necessary actions
+      } else {
+        Alert.alert('Error', response.message);
+      }
     } catch (error) {
-      console.error(error);
-      // Handle error response
+      Alert.alert('Error', 'Failed to register user');
     }
   };
 
@@ -40,9 +36,9 @@ const RegistrationForm: React.FC = () => {
       />
       <TextInput
         placeholder="Password"
-        secureTextEntry
         value={password}
         onChangeText={setPassword}
+        secureTextEntry
       />
       <Button title="Register" onPress={handleRegistration} />
     </View>
