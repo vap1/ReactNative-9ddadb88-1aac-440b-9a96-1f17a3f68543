@@ -1,14 +1,15 @@
 
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { UserLoginRequest, UserLoginResponse } from '../types/Types';
 
-const UserLoginApi = async (request: UserLoginRequest): Promise<UserLoginResponse> => {
+const loginUser = async (request: UserLoginRequest): Promise<UserLoginResponse> => {
   try {
-    const response = await axios.post('/api/login', request);
+    const response: AxiosResponse<UserLoginResponse> = await axios.post('/api/login', request);
     return response.data;
   } catch (error) {
-    throw new Error(error.response.data.message);
+    // Handle error
+    throw new Error('Failed to login user');
   }
 };
 
-export default UserLoginApi;
+export default loginUser;
