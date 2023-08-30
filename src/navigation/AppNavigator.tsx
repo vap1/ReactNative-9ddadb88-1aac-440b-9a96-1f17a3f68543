@@ -21,14 +21,12 @@ const ProfileStack = () => (
 
 const AppNavigator: React.FC = () => {
   return (
-    <NavigationContainer>
-      <Tab.Navigator>
-        <Tab.Screen name="Registration" component={RegistrationScreen} />
-        <Tab.Screen name="Login" component={LoginScreen} />
-        <Tab.Screen name="Profile" component={ProfileStack} />
-        <Tab.Screen name="AdminUserDetails" component={AdminUserDetailsScreen} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <Tab.Navigator>
+      <Tab.Screen name="Registration" component={RegistrationScreen} />
+      <Tab.Screen name="Login" component={LoginScreen} />
+      <Tab.Screen name="Profile" component={ProfileStack} />
+      <Tab.Screen name="AdminUserDetails" component={AdminUserDetailsScreen} />
+    </Tab.Navigator>
   );
 };
 
