@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Alert } from 'react-native';
 import { UserLoginRequest, UserLoginResponse } from '../types/Types';
-import { loginUser } from '../apis/UserLoginApi';
+import loginUser from '../apis/UserLoginApi';
 
 const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -14,19 +14,15 @@ const LoginScreen: React.FC = () => {
         email,
         password,
       };
-
       const response: UserLoginResponse = await loginUser(request);
-
       if (response.success) {
-        // Handle successful login
         Alert.alert('Success', response.message);
+        // Redirect to the profile screen or perform any other necessary actions
       } else {
-        // Handle login error
         Alert.alert('Error', response.message);
       }
     } catch (error) {
-      // Handle API error
-      Alert.alert('Error', 'An error occurred while logging in.');
+      Alert.alert('Error', 'Failed to login user');
     }
   };
 
