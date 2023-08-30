@@ -1,63 +1,42 @@
 
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet } from 'react-native';
-import { UserLoginRequest } from '../types/Types';
-import { loginUser } from '../apis/UserLoginApi';
+import { View, TextInput, Button, Alert } from 'react-native';
+import loginUser from '../apis/UserLoginApi';
 
 const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
-    const request: UserLoginRequest = {
-      email,
-      password,
-    };
-
     try {
-      const response = await loginUser(request);
-      console.log(response);
-      // Handle successful login
+      const response = await loginUser({ email, password });
+      if (response.success) {
+        Alert.alert('Success', response.message);
+        // Redirect to the profile screen or perform any other necessary actions
+      } else {
+        Alert.alert('Error', response.message);
+      }
     } catch (error) {
-      console.error(error);
-      // Handle login error
+      Alert.alert('Error', 'Failed to login user');
     }
   };
 
   return (
-    <View style={styles.container}>
+    <View>
       <TextInput
-        style={styles.input}
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
       />
       <TextInput
-        style={styles.input}
         placeholder="Password"
-        secureTextEntry
         value={password}
         onChangeText={setPassword}
+        secureTextEntry
       />
       <Button title="Login" onPress={handleLogin} />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  input: {
-    width: '80%',
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 10,
-    paddingHorizontal: 10,
-  },
-});
 
 export default LoginForm;
