@@ -1,74 +1,56 @@
 
 import React, { useEffect, useState } from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, ActivityIndicator, Alert } from 'react-native';
 import { UserProfileRequest, UserProfileResponse } from '../types/Types';
-import { getUserProfile } from '../apis/UserProfileApi';
+import getUserProfile from '../apis/UserProfileApi';
 
 const ProfileScreen: React.FC = () => {
-  const [userProfile, setUserProfile] = useState<UserProfileResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState<UserProfileResponse | null>(null);
 
   useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const request: UserProfileRequest = {
+          token: 'YOUR_JWT_TOKEN', // Replace with the actual JWT token
+        };
+        const response = await getUserProfile(request);
+        setProfile(response);
+        setLoading(false);
+      } catch (error) {
+        Alert.alert('Error', 'Failed to retrieve user profile');
+        setLoading(false);
+      }
+    };
+
     fetchUserProfile();
   }, []);
 
-  const fetchUserProfile = async () => {
-    try {
-      const request: UserProfileRequest = {
-        token: 'YOUR_JWT_TOKEN', // Replace with the actual JWT token
-      };
+  if (loading) {
+    return (
+      <View>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
 
-      const response = await getUserProfile(request);
-      setUserProfile(response);
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
-    }
-  };
+  if (!profile) {
+    return (
+      <View>
+        <Text>Error: Failed to retrieve user profile</Text>
+      </View>
+    );
+  }
 
   return (
-    <View style={styles.container}>
-      {userProfile ? (
-        <>
-          <Image source={{ uri: userProfile.user.profilePicture }} style={styles.profilePicture} />
-          <Text style={styles.name}>{userProfile.user.name}</Text>
-          <Text style={styles.email}>{userProfile.user.email}</Text>
-          <Text style={styles.contactInfo}>{userProfile.user.contactInfo}</Text>
-          <Text style={styles.address}>{userProfile.user.address}</Text>
-        </>
-      ) : (
-        <Text>Loading...</Text>
-      )}
+    <View>
+      <Text>Name: {profile.user.name}</Text>
+      <Text>Email: {profile.user.email}</Text>
+      <Text>Contact Info: {profile.user.contactInfo}</Text>
+      <Text>Address: {profile.user.address}</Text>
+      {/* Render other profile details */}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  profilePicture: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 10,
-  },
-  name: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  email: {
-    fontSize: 16,
-    marginBottom: 5,
-  },
-  contactInfo: {
-    fontSize: 16,
-    marginBottom: 5,
-  },
-  address: {
-    fontSize: 16,
-  },
-});
 
 export default ProfileScreen;
